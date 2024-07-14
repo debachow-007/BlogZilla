@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section" style="display: flex">
+        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-body-secondary">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                {% if post.author == current_user or current_user.username == 'Admin' %}
+                    <div>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id) }}"> Update </a>
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#deleteModal"> Delete </button>
+                    </div>
+                {% endif %}
+            </div>
+            <h2 class="article-title">{{ post.title }}</h2>
+            <p class="article-content">{{ post.content }}</p>
+            {% if post.picture %}
+                <img class="img-fluid" src="{{ url_for('static', filename='post_pics/' + post.picture) }}">
+            {% endif %}
+        </div>
+    </article>
+    <h4> Comments </h4>
+    <div>
+        {% for comment in comments %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p class="card-text"><small><a class="mr-2" href='{{ url_for('users.user_posts', username=comment.author.username) }}'>{{ comment.author.username }}</a> on {{ comment.date_posted.strftime('%Y-%m-%d') }}</small></p>
+                <p class="card-text">{{ comment.content }}</p>
+                {% if comment.author == current_user or current_user.username == 'Admin' %}
+                    <a href="{{ url_for('posts.delete_comment', post_id=post.id, comment_id=comment.id) }}" class="btn btn-danger btn-sm float-sm-end" style="--bs-btn-font-size: 10px;">Delete Comment</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <h2>Add a comment</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group mb-2">
+            {{ form.content(class="form-control", placeholder="Write a comment...") }}
+        </div>
+        {{ form.submit(class="btn btn-primary mb-5") }}
+    </form>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Post?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form method="POST" action="{{ url_for('posts.delete_post', post_id=post.id) }}">
+                    <input type="submit" class="btn btn-danger" value="Delete">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

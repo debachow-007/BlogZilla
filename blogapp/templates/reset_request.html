@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <h1>Reset Your Password</h1>
+    <p>An email will be sent to you with instructions on how to reset your password.</p>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Enter the email address associated with your account</legend>
+            <div class="form-group">
+                {{ form.email.label(class="form-control-label") }}
+                {{ form.email(class="form-control form-control-lg") }}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+    <div class="border-top pt-3">
+        <small class="text-body-secondary">
+            <a href="{{ url_for('users.login') }}">Login</a> |
+            <a href="{{ url_for('users.register') }}">Register</a>
+        </small>
+    </div>
+{% endblock content %}

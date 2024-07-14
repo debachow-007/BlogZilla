@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block content %}    
+    <div class="content-section">
+        <div class="media" style="display: flex">
+            <img class="rounded-circle account-img" src="{{ image_file }}">
+            <div class="media-body" style="flex-direction:column">
+                <h2 class="account-heading">{{ current_user.username }}</h2>
+                <p class="text-secondary">{{ current_user.email }}</p>
+            </div>
+        </div>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-control mt-2 mb-2">
+                <legend class="border-bottom mb-4">Account Info</legend>
+                <div class="form-control mt-2 mb-2">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif %}    
+
+                </div>
+                <div class="form-control mt-2 mb-2">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-control mt-2 mb-2">
+                    {{ form.picture.label() }}
+                    <br>
+                    {{ form.picture(class="form-control-file") }}
+                    <br>
+                    {% if form.picture.errors %}
+                        {% for error in form.picture.errors %}
+                            <span class="text-danger">{{ error }}</span><br>
+                        {% endfor %}
+                    {% endif %}
+                    <small class="text-body-secondary">
+                        <a class="ml-2" href="{{ url_for('users.remove_image') }}">Remove Profile Picture</a>
+                    </small>
+                </div>
+            </fieldset>
+            <div class="form-control mt-2 mb-2">
+                {{ form.submit(class="btn btn-outline-info") }}
+                <button type="button" class="btn btn-danger btn-sm float-sm-end" data-bs-toggle="modal" data-bs-target="#deleteModal"> Delete Account </button>
+            </div>
+        </form>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Account?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Deleting your account will also delete all your posts and comments.</p>
+                    <p>This action cannot be undone.</p>
+                    <p>Are you sure you want to proceed?</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form method="POST" action="{{ url_for('users.delete_account') }}">
+                    <input type="hidden" name="user_id" value="{{ current_user.id }}">
+                    <input type="submit" class="btn btn-danger" value="Delete">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
